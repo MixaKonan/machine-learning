@@ -1,25 +1,25 @@
 import numpy as np
 
-def reject_outliers(features_values: list[list], y: list, upper_percentile: int, lower_percentile: int, outlierConstant: float) -> (list[list], list):
-    feature_amount = len(features_values[0])
-    new_x_set = []
-    new_y = y
-    for current_feature_index in range(feature_amount):
-        current_feature_values = [features[current_feature_index] for _, features in enumerate(features_values)]
-        upper_quartile = np.percentile(current_feature_values[1], upper_percentile)
-        lower_quartile = np.percentile(current_feature_values[1], lower_percentile)
+def reject_outliers(features_table: np.ndarray[np.ndarray], values_to_be_predicted: list, upper_percentile: int, lower_percentile: int, outlierConstant: float) -> (list[list], list):
+    columns = len(features_table[0])
+    for column in range(columns):
+        column_values = [row[column] for _, row in enumerate(features_table)]
+        upper_quartile = np.percentile(column_values, upper_percentile)
+        lower_quartile = np.percentile(column_values, lower_percentile)
         IQR = (upper_quartile - lower_quartile) * outlierConstant
-        quartileSet = (lower_quartile - IQR, upper_quartile + IQR)
+        low, high = (lower_quartile - IQR, upper_quartile + IQR)
 
         indices_to_delete = []
-        for index, feature_value in enumerate(current_feature_values):
-            if not (feature_value >= quartileSet[0] and feature_value <= quartileSet[1]):
+        for index, value in enumerate(column_values):
+            if not (value >= low and value <= high):
                 indices_to_delete.append(index)
+        
+        features_table = np.delete(features_table, indices_to_delete, 0)
+        values_to_be_predicted = np.delete(values_to_be_predicted, indices_to_delete, 0)
+        
 
-        new_x_set.append(np.delete(features_values, indices_to_delete))
-        new_y = np.delete(new_y, indices_to_delete)
+    return features_table, values_to_be_predicted
 
-    return new_x_set, new_y
 
 def lr_gradient_descent(m_now, b_now, x_values, y_values,  learning_rate):
     if len(x_values) != len(y_values):
