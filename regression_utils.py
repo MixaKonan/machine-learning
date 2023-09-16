@@ -20,8 +20,7 @@ def reject_outliers(features_table: np.ndarray[np.ndarray], values_to_be_predict
 
     return features_table, values_to_be_predicted
 
-
-def lr_gradient_descent(m_now, b_now, x_values, y_values,  learning_rate):
+def gradient_descent(m_now, b_now, x_values, y_values,  learning_rate):
     if len(x_values) != len(y_values):
         raise ValueError('X and Y values amounts must be equal.')
 
