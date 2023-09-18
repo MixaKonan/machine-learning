@@ -1,9 +1,9 @@
 import numpy as np
 
-def reject_outliers(features_table: np.ndarray[np.ndarray], values_to_be_predicted: list, upper_percentile: int, lower_percentile: int, outlierConstant: float) -> (list[list], list):
+def reject_outliers(features_table: np.ndarray[np.ndarray], values_to_be_predicted: np.ndarray, upper_percentile: int, lower_percentile: int, outlierConstant: float) -> (np.ndarray[np.ndarray], np.ndarray):
     columns = len(features_table[0])
     for column in range(columns):
-        column_values = [row[column] for _, row in enumerate(features_table)]
+        column_values = [row[column] for row in features_table]
         upper_quartile = np.percentile(column_values, upper_percentile)
         lower_quartile = np.percentile(column_values, lower_percentile)
         IQR = (upper_quartile - lower_quartile) * outlierConstant
